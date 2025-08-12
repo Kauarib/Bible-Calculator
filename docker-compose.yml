@@ -1,0 +1,22 @@
+# docker-compose.yml
+
+version: '3.8'
+
+services:
+  # Serviço do Backend
+  backend:
+    build: ./backend_app  # <-- CAMINHO ATUALIZADO
+    container_name: calculadora_api
+    ports:
+      - "3001:3001"
+    restart: unless-stopped
+
+  # Serviço do Frontend
+  frontend:
+    build: ./frontend_app # <-- CAMINHO ATUALIZADO
+    container_name: calculadora_ui
+    ports:
+      - "3003:3000"
+    restart: unless-stopped
+    depends_on:
+      - backend

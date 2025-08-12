@@ -1,0 +1,12 @@
+# backend_app/.gitignore
+
+# Dependencies
+/node_modules
+
+# Environment Variables
+.env
+
+# Logs
+logs
+*.log
+npm-debug.log*
