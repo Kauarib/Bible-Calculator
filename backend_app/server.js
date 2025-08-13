@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const apiRoutes = require('./src/routes/calculadoraRoute');
+const authRoutes = require('./src/routes/authRoute'); 
 
 // Inicializa o aplicativo Express
 const app = express();
@@ -12,6 +13,8 @@ app.use(express.json()); // Habilita o parsing de JSON no corpo das requisiçõe
 
 // Rota principal da API
 app.use('/api', apiRoutes);
+app.use('/auth', authRoutes)
+
 
 // Rota de "saúde" para verificar se o servidor está no ar
 app.get('/', (req, res) => {

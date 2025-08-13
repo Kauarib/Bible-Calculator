@@ -1,22 +1,46 @@
-# docker-compose.yml
+## docker-compose.yml
 
 version: '3.8'
 
 services:
-  # Serviço do Backend
+  # Novo serviço: Banco de Dados PostgreSQL
+  postgres:
+    image: postgres:15-alpine
+    container_name: calculadora_db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: mydb
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # Serviço do Backend (com ajustes)
   backend:
-    build: ./backend_app  # <-- CAMINHO ATUALIZADO
+    build: ./backend_app
     container_name: calculadora_api
     ports:
       - "3001:3001"
+    environment:
+      # Passamos a URL do DB para dentro do container
+      DATABASE_URL: "postgresql://user:password@postgres:5432/mydb?schema=public"
+    depends_on:
+      - postgres # Garante que o DB inicie antes da API
     restart: unless-stopped
 
-  # Serviço do Frontend
+  # Serviço do Frontend (sem alterações)
   frontend:
-    build: ./frontend_app # <-- CAMINHO ATUALIZADO
+    build: ./frontend_app
     container_name: calculadora_ui
     ports:
       - "3003:3000"
     restart: unless-stopped
     depends_on:
       - backend
+
+# Define um volume para persistir os dados do banco
+volumes:
+  postgres_data:
+   
