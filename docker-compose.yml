@@ -26,6 +26,8 @@ services:
     environment:
       # Passamos a URL do DB para dentro do container
       DATABASE_URL: "postgresql://user:password@postgres:5432/mydb?schema=public"
+    env_file:
+      - ./backend_app/.env
     depends_on:
       - postgres # Garante que o DB inicie antes da API
     restart: unless-stopped

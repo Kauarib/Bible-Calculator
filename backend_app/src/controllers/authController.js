@@ -5,20 +5,28 @@ const bcrypt = require('bcryptjs');
 const e = require('express');
 const { z } = require('zod');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 
 const prisma = new PrismaClient();
 
 // Esquema de validação com Zod
 const registerSchema = z.object({
+  name: z.string().min(4, {message: "O nome deve ter no mínimo 4 caracteres"}).max(100, {message: "O nome deve ter no máximo 100 caracteres"}),
   email: z.string().email({ message: "Email inválido" }),
   password: z.string().min(8, { message: "A senha deve ter no mínimo 8 caracteres" }),
+});
+
+const loginSchema = z.object({
+  email: z.string().email({ message: "Email inválido" }),
+  // É uma boa prática validar o formato da senha também no login
+  password: z.string().min(1, { message: "A senha é obrigatória" }),
 });
 
 const register = async (req, res) => {
   try {
     // 1. Validar a entrada
-    const { email, password } = registerSchema.parse(req.body);
+    const {  name, email, password } = registerSchema.parse(req.body);
 
     // 2. Verificar se o usuário já existe
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -32,6 +40,7 @@ const register = async (req, res) => {
     // 4. Salvar o novo usuário no banco de dados
     const user = await prisma.user.create({
       data: {
+        name,
         email,
         password: hashedPassword,
       },
@@ -53,7 +62,7 @@ const register = async (req, res) => {
 const login = async (req, res) => {
     try { 
         // 1. Validar a entrada
-        const {email, password}= registerSchema.parse(req.body);
+        const {email, password}= loginSchema.parse(req.body);
         // 2. Verificar se o usuário existe
         const user = await prisma.user.findUnique({ where: { email}});
 
