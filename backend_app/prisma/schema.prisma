@@ -23,4 +23,24 @@ model User {
   password  String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  readingPlans ReadingPlan[]
+}
+//Planos de leitura
+model ReadingPlan {
+  id             String    @id @default(cuid())
+  planName       String    @default("Meu Plano de Leitura")
+  chaptersPerDay Int
+  totalDays      Int
+  //progresso
+  progress       Int       @default(0) // Começa com 0 capítulos lidos
+  isCompleted    Boolean   @default(false) // Começa como não concluído
+  lastReadAt     DateTime? // '?' torna o campo opcional, pois no início não há leitura
+  
+  // Relação com o Usuário
+  user           User      @relation(fields: [userId], references: [id])
+  userId         String
+
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 }
